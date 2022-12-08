@@ -3,6 +3,7 @@ import http.server
 import socketserver
 import os
 import datetime
+import requests
 from urllib.parse import urlparse, parse_qs
 
 #print('source code for "http.server":', http.server.__file__)
@@ -13,22 +14,13 @@ class web_server(http.server.SimpleHTTPRequestHandler):
 
 		print(self.path)
         
-		if self.path == '/':
-			self.protocol_version = 'HTTP/1.1'
-			self.send_response(200)
-			self.send_header("Content-type", "text/html; charset=UTF-8")
-			self.end_headers()            
-			self.wfile.write(b"Enter values in parameters\n")
-		elif 'num1' in self.path and 'num2' in self.path:
-			self.protocol_version = 'HTTP/1.1'
-			self.send_response(200)
-			self.send_header("Content-type", "text/plain; charset=UTF-8")
-			self.end_headers()
-			query_components = parse_qs(urlparse(self.path).query)
-			a = 123
-			self.wfile.write(str(a).encode('UTF-8'));
-		else:
-			super().do_GET()
+		headers = {'Accept': 'application/json'}
+		r = requests.get(self.path, headers=headers)
+		print(f"Response: {r.json()}")
+	def do_POST(self):
+		r = requests.post(self.path, json={"key":"value"})
+		print(f"Request: {r.json()}")
+
     
 # --- main ---
 
