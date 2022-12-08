@@ -1,25 +1,28 @@
 #!/usr/bin/env python3
-import http.server
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import socketserver
-import os
-import datetime
-import requests
-from urllib.parse import urlparse, parse_qs
+import json
+import cgi
 
-#print('source code for "http.server":', http.server.__file__)
+class web_server(BaseHTTPRequestHandler):
+	def _set_headers(self):
+		self.send_response(200)
+		self.send_header('Content-type', 'application/json')
+		self.end_headers()
 
-class web_server(http.server.SimpleHTTPRequestHandler):
-    
-	def do_GET(self):
+	def do_HEAD(self):
+		self._set_headers()
 
-		print(self.path)
-        
-		headers = {'Accept': 'application/json'}
-		r = requests.get(self.path, headers=headers)
-		print(f"Response: {r.json()}")
 	def do_POST(self):
-		r = requests.post(self.path, json={"key":"value"})
-		print(f"Request: {r.json()}")
+		ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
+            
+		length = int(self.headers.get('content-length'))
+		message = json.loads(self.rfile.read(length))
+        
+		message['received'] = 'ok'
+        
+		self._set_headers()
+		self.wfile.write(json.dumps(message))
 
     
 # --- main ---
