@@ -24,7 +24,7 @@ def lab6():
 		output["lowercase"] = int(sum(map(str.islower, content['str'])))
 		output["uppercase"] = sum(1 for c in content['str'] if c.isupper())
 		output["digits"] = sum(c.isdigit() for c in content['str'])
-		output["special"] = len(content['str']) - sum(c.isalpha() for c in content['str']) - sum(c.isdigit() fro c in content['str'])
+		output["special"] = len(content['str']) - sum(c.isalpha() for c in content['str']) - sum(c.isdigit() for c in content['str'])
 
 if __name__ == "__main__":
 	app.run(debug=True, host='0.0.0.0', port=4080)
