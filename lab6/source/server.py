@@ -1,26 +1,30 @@
-#!/usr/bin/env python3
-import http.server
-import socketserver
-import os
+from flask import Flask, request
+import xmltodict
+from dicttoxml import dicttoxml
 
-class web_server(BaseHTTPRequestHandler):
-	def _set_headers(self):
-		self.send_response(200)
-		self.send_header('Content-type', 'application/json')
-		self.end_headers()
+app = Flask(__name__)
 
-	def do_HEAD(self):
-		self._set_headers()
+@app.route("/hello")
+def hello():
+	return "Hello World!"
 
-	def do_POST(self):
-		self.wfile.write(b"Hello World!!\n")
+@app.route("/", methods = ['POST'])
+def lab6():
+	content = list(xmltodict.parse(request.get_data()).values()).pop()
+	print(content)
+	output = {}
+	if 'num1' in content and 'num2' in content:
+		numbers = [int(content['num1']), int(content['num2'])]
+		output = {"sum" : int(numbers[0]+ numbers[1]),
+			"sub" : int(numbers[0] - numbers[1]),
+			"mul" : int(numbers[0] * numbers[1]),
+			"div" : int(numbers[0] / numbers[1]),
+			"mod" : int(numbers[0] % numbers[1])}
+	if 'str' in content:
+		output["lowercase"] = int(sum(map(str.islower, content['str'])))
+		output["uppercase"] = sum(1 for c in content['str'] if c.isupper())
+		output["digits"] = sum(c.isdigit() for c in content['str'])
+		output["special"] = len(content['str']) - sum(c.isalpha() for c in content['str']) - sum(c.isdigit() fro c in content['str'])
 
-    
-# --- main ---
-
-PORT = 4080
-
-print(f'Starting: http://localhost:{PORT}')
-
-tcp_server = socketserver.TCPServer(("",PORT), web_server)
-tcp_server.serve_forever()
+if __name__ == "__main__":
+	app.run(debug=True, host='0.0.0.0', port=4080)
