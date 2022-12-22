@@ -13,7 +13,7 @@ class web_server(BaseHTTPRequestHandler):
 		self._set_headers()
 
 	def do_POST(self):
-		self.wfile.write(b"Hello World!\n")
+		self.wfile.write(b"Hello World!!\n")
 
     
 # --- main ---
