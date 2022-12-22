@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import http.server
 import socketserver
-import json
-import cgi
+import os
 
 class web_server(BaseHTTPRequestHandler):
 	def _set_headers(self):
@@ -14,15 +13,7 @@ class web_server(BaseHTTPRequestHandler):
 		self._set_headers()
 
 	def do_POST(self):
-		ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
-            
-		length = int(self.headers.get('content-length'))
-		message = json.loads(self.rfile.read(length))
-        
-		message['received'] = 'ok'
-        
-		self._set_headers()
-		self.wfile.write(json.dumps(message))
+		self.wfile.write(b"Hello World!\n")
 
     
 # --- main ---
